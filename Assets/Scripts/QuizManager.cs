@@ -16,7 +16,16 @@ public class QuizManager : MonoInstance<QuizManager>
     public static int CorrectAnswers => Instance._correctAnswers;
     public static int WrongAnswers => Instance._wrongAnswers;
     QuestionData CurrentQuestion => _questionsListDatas[_currentQuizIndex].QuestionDatas[_currentQuestionIndex];
-    
+
+    public static int QuestionsCount()
+    {
+        int count = 0;
+        foreach (var questionsListData in Instance._questionsListDatas)
+        {
+            count += questionsListData.QuestionDatas.Count;
+        }
+        return count;
+    }
 
     void Start()
     {
@@ -33,7 +42,6 @@ public class QuizManager : MonoInstance<QuizManager>
     {
         if (isAnswerCorrect(answerIndex))
         {
-            PlayerInstance.points++;
             Instance._correctAnswers++;
         }
         else

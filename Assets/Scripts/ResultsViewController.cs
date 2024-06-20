@@ -10,6 +10,12 @@ public class ResultsViewController : MonoBehaviour
     [SerializeField] private Sprite _neutralSprite;
     [SerializeField] private TMP_Text _wrongAnswers;
     [SerializeField] private TMP_Text _rightAnswers;
+    [SerializeField] private TMP_Text _time;
+    
+    [SerializeField] private TMP_Text _botWrongAnswers;
+    [SerializeField] private TMP_Text _botRightAnswers;
+    [SerializeField] private TMP_Text _botTime;
+    
     [SerializeField] private Image _resultImage;
     [SerializeField] private CanvasGroup _canvasGroup;
     [SerializeField] private float _showTime = 0.2f;
@@ -19,17 +25,27 @@ public class ResultsViewController : MonoBehaviour
         _canvasGroup.alpha = 0;
         _wrongAnswers.text = QuizManager.WrongAnswers.ToString();
         _rightAnswers.text = QuizManager.CorrectAnswers.ToString();
-        if (QuizManager.CorrectAnswers < QuizManager.WrongAnswers)
+        _time.text = Time.timeSinceLevelLoad.ToString();
+        _botWrongAnswers.text = BotInstance.IncorrectAnswers().ToString();
+        _botRightAnswers.text = BotInstance.CorrectAnswers().ToString();
+        _botTime.text = BotInstance.Time().ToString();
+        if (QuizManager.CorrectAnswers > BotInstance.CorrectAnswers())
         {
-            _resultImage.sprite = _badSprite;
-        }
-        else if (QuizManager.WrongAnswers == 0)
-        {
+            PlayerInstance.points += QuizManager.CorrectAnswers;
             _resultImage.sprite = _goodSprite;
+        }
+        else if (QuizManager.CorrectAnswers == BotInstance.CorrectAnswers() && Time.timeSinceLevelLoad < BotInstance.Time())
+        {
+            PlayerInstance.points += QuizManager.CorrectAnswers;
+            _resultImage.sprite = _goodSprite;
+        }
+        else if (QuizManager.CorrectAnswers == BotInstance.CorrectAnswers() && Time.timeSinceLevelLoad >= BotInstance.Time())
+        {
+            _resultImage.sprite = _neutralSprite;
         }
         else
         {
-            _resultImage.sprite = _neutralSprite;
+            _resultImage.sprite = _badSprite;
         }
         StartCoroutine(Showing());
         
